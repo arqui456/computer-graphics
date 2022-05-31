@@ -20,6 +20,7 @@ static GLuint texName2;
 static GLuint texName3;
 static GLuint texName4;
 static GLuint texName5;
+//static GLuint texName6;
 
 static bool use_colors = false;
 static bool draw_wireframe = true;
@@ -102,7 +103,7 @@ void createTexture(GLuint* text_name, char* file_path){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
 void loadTexture(){
@@ -115,6 +116,8 @@ void loadTexture(){
     createTexture(&texName2, "./texture/earth.png");
     createTexture(&texName3, "./texture/mars.png");
     createTexture(&texName4, "./texture/stars.png");
+    createTexture(&texName5, "./texture/checkered-pattern.png");
+
 }
 
 int enableOrbit(){
@@ -370,15 +373,24 @@ void drawFloor(float angle){
     glTranslatef(-20,-100,-2);
     glColor3f(1, 1, 1);
     glScalef(6, 20, 1);
+    GLfloat material_col[] = {0.5, 0.1, 0.1, 0.1};
+    glMaterialfv(GL_FRONT, GL_EMISSION, material_col);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texName5); 
     glPushMatrix();
     glBegin(GL_POLYGON);
+        glTexCoord2f(0.0,0.0);
         glVertex3f(2.0, 4.0, 0.0);
+        glTexCoord2f(0.0,1.0);
         glVertex3f(8.0, 4.0, 0.0);
+        glTexCoord2f(1.0,1.0);
         glVertex3f(8.0, 6.0, 0.0);
+        glTexCoord2f(1.0,0.0);
         glVertex3f(2.0, 6.0, 0.0);
     glEnd();
     glFlush();
     glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
     glPopAttrib();
 }
 

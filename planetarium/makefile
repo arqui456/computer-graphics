@@ -31,7 +31,7 @@ planetary: $(OBJS)
 	$(CC) $(CC_FLAGS) -o $@ $^
 
 opengl:
-	gcc .\source\input.c .\source\planets.c .\source\planetary.c -lm -lopengl32 -lglu32 -lSDL2_image -mwindows .\freeglut.dll -o main
+	gcc .\source\input.c .\source\planets.c .\source\planetary.c -lm -lopengl32 -lglu32 -lSDL2 -lSDL2_image -mwindows .\freeglut.dll -o main
 
 clear:
 	rm *.o

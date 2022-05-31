@@ -6,14 +6,17 @@ make: *** No rule to make target 'all'.  Stop.
 # Copyright (C) 1988-2020 Free Software Foundation, Inc.
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
+ 
 # There is NO WARRANTY, to the extent permitted by law.
  
 
-# Make data base, printed on Thu May 26 11:46:01 2022
+# Make data base, printed on Tue May 31 10:55:23 2022
 
 # Variables
-
  
+
+# environment
+FPS_BROWSER_APP_PROFILE_STRING = Internet Explorer
 # environment
 SYSTEMDRIVE = C:
 # environment
@@ -23,7 +26,7 @@ USERPROFILE = C:\Users\user
 # environment
 LOCALAPPDATA = C:\Users\user\AppData\Local
 # environment
-VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-494ea065-26e8-4d7b-8f90-9b70121a25a8-sock
+VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-5853b110-f31a-4b2a-b7c5-488c4af1b4ed-sock
 # environment
 VSCODE_CWD = C:\Users\user\AppData\Local\Programs\Microsoft VS Code Insiders
 # environment
@@ -43,7 +46,9 @@ GOPATH = C:\Users\user\go
 # automatic
 @D = $(patsubst %/,%,$(dir $@))
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_9808_JGUUHAIFRCWBHRSM
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_9816_WYOQYRPONVGVKTPY
+# environment
+FPS_BROWSER_USER_PROFILE_STRING = Default
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # default
@@ -59,7 +64,7 @@ VSCODE_LOG_STACK = true
 # environment
 GIT_INSTALL_ROOT = C:\Users\user\scoop\apps\git\current
 # environment
-VSCODE_CODE_CACHE_PATH = C:\Users\user\AppData\Roaming\Code - Insiders\CachedData\528ee1ae3daabe30c1307cf9dcd6e77eb96094bc
+VSCODE_CODE_CACHE_PATH = C:\Users\user\AppData\Roaming\Code - Insiders\CachedData\88d9a0848c3097cb197bee35862dd174f3966fc4
 # environment
 LANG = C
 # default
@@ -103,7 +108,7 @@ MAKEFILE_LIST :=
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-VSCODE_PID = 9808
+VSCODE_PID = 9816
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # automatic
@@ -120,6 +125,7 @@ PROGRAMDATA = C:\ProgramData
 SHELL := /bin/sh
 # environment
 HOMEPATH = \Users\user
+ 
 # default
 MAKECMDGOALS := all
 # environment
@@ -133,7 +139,7 @@ MAKELEVEL := 0
 # default
 MAKE = $(MAKE_COMMAND)
 # environment
-PATH = /c/Python39/Scripts:/c/Python39:/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem:/c/Windows/System32/WindowsPowerShell/v1.0:/c/Windows/System32/OpenSSH:/c/ProgramData/chocolatey/bin:/c/Program Files (x86)/Calibre2:/c/Program Files/dotnet:/c/Program Files/Go/bin:/c/Program Files/Microchip/xc8/v2.31/bin:/c/Users/user/scoop/shims:/c/Users/user/AppData/Local/Microsoft/WindowsApps:/c/Users/user/AppData/Local/Programs/Microsoft VS Code Insiders/bin:/c/Users/user/go/bin:/d/FPGA/questa_fse/win64:/mingw64/bin:/usr/bin:/mingw64/include
+PATH = /c/Python39/Scripts:/c/Python39:/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem:/c/Windows/System32/WindowsPowerShell/v1.0:/c/Windows/System32/OpenSSH:/c/ProgramData/chocolatey/bin:/c/Program Files (x86)/Calibre2:/c/Program Files/dotnet:/c/Program Files/Go/bin:/c/Program Files/Microchip/xc8/v2.31/bin:/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/c/Users/user/scoop/shims:/c/Users/user/AppData/Local/Microsoft/WindowsApps:/c/Users/user/AppData/Local/Programs/Microsoft VS Code Insiders/bin:/c/Users/user/go/bin:/d/FPGA/questa_fse/win64:/mingw64/bin:/usr/bin:/mingw64/include
 # environment
 COMPUTERNAME = WINDOWS-PC
 # default
@@ -160,7 +166,6 @@ COMMONPROGRAMFILES = C:\Program Files\Common Files
 PROGRAMW6432 = C:\Program Files
 # environment
 PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW
- 
 # automatic
 +F = $(notdir $+)
 # environment
@@ -171,8 +176,6 @@ USERDOMAIN = WINDOWS-PC
 GNUMAKEFLAGS := 
 # environment
 OS = Windows_NT
-# environment
-__COMPAT_LAYER = DetectorsAppHealth
 # makefile
 .DEFAULT_GOAL := 
 # default
@@ -185,6 +188,7 @@ USERDOMAIN_ROAMINGPROFILE = WINDOWS-PC
 NUMBER_OF_PROCESSORS = 12
 # environment
 PUBLIC = C:\Users\Public
+ 
 # environment
 QUARTUS_ROOTDIR = D:\FPGA\quartus
 # environment
@@ -226,10 +230,12 @@ PROCESSOR_REVISION = 5000
 # environment
 PROCESSOR_IDENTIFIER = AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD
 # variable set hash-table stats:
-# Load=105/1024=10%, Rehash=0, Collisions=11/129=9%
+ 
+# Load=106/1024=10%, Rehash=0, Collisions=12/130=9%
 
 # Pattern-specific Variable Values
 
+ 
 # No pattern-specific variable values.
 
 # Directories
@@ -292,6 +298,6 @@ GNUmakefile:
 # strcache performance: lookups = 20 / hit rate = 15%
 # hash-table stats:
 # Load=17/8192=0%, Rehash=0, Collisions=0/20=0%
-# Finished Make data base on Thu May 26 11:46:01 2022
+# Finished Make data base on Tue May 31 10:55:23 2022
 
  

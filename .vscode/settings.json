@@ -1,3 +1,9 @@
 {
-    "makefile.extensionOutputFolder": "./.vscode"
+    "makefile.extensionOutputFolder": "./.vscode",
+    "files.associations": {
+        "tinyobj_loader_c.h": "c",
+        "stdio.h": "c",
+        "gl.h": "c",
+        "windows.h": "c"
+    }
 }

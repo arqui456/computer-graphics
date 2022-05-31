@@ -35,7 +35,6 @@ void drawScene(void) {
     drawStars(AnimationAngle);
     drawBench(AnimationAngle);
     drawFloor(AnimationAngle);
-    //drawAngel(AnimationAngle);
     glFlush();
     glutSwapBuffers();
     if(RunMode == 1) glutPostRedisplay();
