@@ -1,6 +1,5 @@
 #include "input.h"
-#include "planets.h"
-#include <windows.h>
+#include "church.h"
 
 float AnimateStep;
 
