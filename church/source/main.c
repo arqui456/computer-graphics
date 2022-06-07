@@ -32,9 +32,10 @@ void drawScene(void) {
     glLoadIdentity();
     menu();
     gluLookAt(eye[0], eye[1], eye[2], 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-    drawStars(AnimationAngle);
-    drawBench(AnimationAngle);
-    drawFloor(AnimationAngle);
+    //drawStars(AnimationAngle);
+    //drawBench(AnimationAngle);
+    //drawFloor(AnimationAngle);
+    drawAngel(AnimationAngle);
     glFlush();
     glutSwapBuffers();
     if(RunMode == 1) glutPostRedisplay();

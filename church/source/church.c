@@ -117,7 +117,6 @@ void loadTexture(){
     createTexture(&texName3, "./texture/mars.png");
     createTexture(&texName4, "./texture/stars.png");
     createTexture(&texName5, "./texture/checkered-pattern.png");
-
 }
 
 int enableOrbit(){
@@ -350,7 +349,6 @@ int LoadObject(const char* filename, Object* instanceOfObject) {
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_LIGHTING);
     }   
-
     for (index = 0; index < attrib.num_face_num_verts; ++index) {
         // offset by 3 because values are grouped as vertex/normal/texture
         instanceOfObject->triangles[index].vertices[0] = attrib.faces[3 * index].v_idx;
@@ -396,7 +394,7 @@ void drawFloor(float angle){
 
 void Drawer(Object obj, float angle, float rX, float rY, float rZ,
             float x, float y, float z, float r, float g, float b,
-            int butcher, int tunner, float scale){
+            int butcher, int tunner, float sX, float sY, float sZ){
 
     DEBUG {
         glDisable(GL_LIGHTING);
@@ -411,7 +409,7 @@ void Drawer(Object obj, float angle, float rX, float rY, float rZ,
         glRotatef(angle, rX, rY, rZ);
         glTranslatef(x,y,z);
         glColor3f(r, g, b);
-        glScalef(scale, scale, scale);
+        glScalef(sX, sY, sZ);
         glPushMatrix();
             glBegin(GL_TRIANGLES);
             for (size_t index = 0; index < obj.num_triangles /butcher + tunner; index++) {
@@ -442,9 +440,10 @@ void Drawer(Object obj, float angle, float rX, float rY, float rZ,
 
 void drawAngel(double angle) {
     Object obj;
-    int err = LoadObject("./objs/winged-victory.obj", &obj);
+    int err = LoadObject("./objs/church2.obj", &obj);
     if (err) return;
-    Drawer(obj, 90, 1, 0, 0, 0, 0, 0, 1, 0.33, 0.23, 1, 0, 1);
+    //glLoadIdentity();
+    Drawer(obj, 90, 1, 0, 0, 0, 0, -5, 1, 1, 0.5, 1, 0, 1, 1, 1);
 }
 
 void drawBench(double angle) {
@@ -452,29 +451,29 @@ void drawBench(double angle) {
     int err = LoadObject("./objs/bench.obj", &obj);
     if (err) return;
     
-    Drawer(obj, 90, 1, 0, 0, 0, 0, 0, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 5, 0, 0, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 10, 0, 0, 0.44, 0.33, 0.23, 3, 10, 1);
+    Drawer(obj, 90, 1, 0, 0, 0, 0, 0, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 5, 0, 0, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 10, 0, 0, 0.44, 0.33, 0.23, 3, 10, 1, 1, 1);
 
-    Drawer(obj, 90, 1, 0, 0, 15, 0, 0, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 20, 0, 0, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 25, 0, 0, 0.44, 0.33, 0.23, 3, 10, 1);
+    Drawer(obj, 90, 1, 0, 0, 15, 0, 0, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 20, 0, 0, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 25, 0, 0, 0.44, 0.33, 0.23, 3, 10, 1, 1, 1);
 
-    Drawer(obj, 90, 1, 0, 0, 0, 0, 5, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 5, 0, 5, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 10, 0, 5, 0.44, 0.33, 0.23, 3, 10, 1);
+    Drawer(obj, 90, 1, 0, 0, 0, 0, 5, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 5, 0, 5, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 10, 0, 5, 0.44, 0.33, 0.23, 3, 10, 1, 1, 1);
 
-    Drawer(obj, 90, 1, 0, 0, 15, 0, 5, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 20, 0, 5, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 25, 0, 5, 0.44, 0.33, 0.23, 3, 10, 1);
+    Drawer(obj, 90, 1, 0, 0, 15, 0, 5, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 20, 0, 5, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 25, 0, 5, 0.44, 0.33, 0.23, 3, 10, 1, 1, 1);
 
-    Drawer(obj, 90, 1, 0, 0, 0, 0, 10, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 5, 0, 10, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 10, 0, 10, 0.44, 0.33, 0.23, 3, 10, 1);
+    Drawer(obj, 90, 1, 0, 0, 0, 0, 10, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 5, 0, 10, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 10, 0, 10, 0.44, 0.33, 0.23, 3, 10, 1, 1, 1);
 
-    Drawer(obj, 90, 1, 0, 0, 15, 0, 10, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 20, 0, 10, 0.44, 0.33, 0.23, 1, 0, 1);
-    Drawer(obj, 90, 1, 0, 0, 25, 0, 10, 0.44, 0.33, 0.23, 3, 10, 1);
+    Drawer(obj, 90, 1, 0, 0, 15, 0, 10, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 20, 0, 10, 0.44, 0.33, 0.23, 1, 0, 1, 1, 1);
+    Drawer(obj, 90, 1, 0, 0, 25, 0, 10, 0.44, 0.33, 0.23, 3, 10, 1, 1, 1);
 }
 
 void Draw(const DrawObject* draw_object) {
