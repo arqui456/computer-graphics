@@ -9,6 +9,8 @@ from camera import Camera
 
 PI = 3.14159265359
 
+SCALE = 2
+
 cam = Camera()
 WIDTH, HEIGHT = 1280, 720
 lastX, lastY = WIDTH / 2, HEIGHT / 2
@@ -75,8 +77,21 @@ def mouse_look_clb(window, xpos, ypos):
     cam.process_mouse_movement(xoffset, yoffset)
 
 
-vertex_src = """
-# version 330
+DLIGHT_FUNC = """
+float dLight( 
+    in vec3 light_pos, // normalised light position
+    in vec3 frag_normal // normalised geometry normal
+) {
+    // returns vec2( ambientMult, diffuseMult )
+    float n_dot_pos = max( 0.0, dot( 
+        frag_normal, light_pos
+    ));
+    return n_dot_pos;
+}		
+"""
+
+
+vertex_src = "# version 330"+DLIGHT_FUNC+"""
 
 layout(location = 0) in vec3 a_position;
 layout(location = 1) in vec2 a_texture;
@@ -87,12 +102,72 @@ uniform mat4 view;
 
 out vec2 v_texture;
 
+uniform vec4 Global_ambient;
+uniform vec4 Light_ambient;
+uniform vec4 Light_diffuse;
+uniform vec3 Light_location;
+uniform vec4 Material_ambient;
+uniform vec4 Material_diffuse;
+attribute vec3 Vertex_position;
+attribute vec3 Vertex_normal;
+varying vec4 baseColor;
+
+
 void main()
 {
     gl_Position = projection * view * model * vec4(a_position, 1.0);
     v_texture = a_texture;
+    vec3 EC_Light_location = gl_NormalMatrix * Light_location;
+    float diffuse_weight = dLight(
+        normalize(EC_Light_location),
+        normalize(gl_NormalMatrix * Vertex_normal)
+    );
+    baseColor = clamp( 
+    (
+        // global component 
+        (Global_ambient * Material_ambient)
+        // material's interaction with light's contribution 
+        // to the ambient lighting...
+        + (Light_ambient * Material_ambient)
+        // material's interaction with the direct light from 
+        // the light.
+        + (Light_diffuse * Material_diffuse * diffuse_weight)
+    ), 0.0, 1.0);
 }
 """
+
+VERTEX_SHADER = DLIGHT_FUNC + '''
+uniform vec4 Global_ambient;
+uniform vec4 Light_ambient;
+uniform vec4 Light_diffuse;
+uniform vec3 Light_location;
+uniform vec4 Material_ambient;
+uniform vec4 Material_diffuse;
+attribute vec3 Vertex_position;
+attribute vec3 Vertex_normal;
+varying vec4 baseColor;
+void main() {
+    gl_Position = gl_ModelViewProjectionMatrix * vec4( 
+        Vertex_position, 1.0
+    );
+    vec3 EC_Light_location = gl_NormalMatrix * Light_location;
+    float diffuse_weight = dLight(
+        normalize(EC_Light_location),
+        normalize(gl_NormalMatrix * Vertex_normal)
+    );
+    baseColor = clamp( 
+    (
+        // global component 
+        (Global_ambient * Material_ambient)
+        // material's interaction with light's contribution 
+        // to the ambient lighting...
+        + (Light_ambient * Material_ambient)
+        // material's interaction with the direct light from 
+        // the light.
+        + (Light_diffuse * Material_diffuse * diffuse_weight)
+    ), 0.0, 1.0);
+}
+'''
 
 fragment_src = """
 # version 330
@@ -108,6 +183,23 @@ void main()
     out_color = texture2D(s_texture, v_texture);
 }
 """
+
+FRAGMENT_SHADER = '''
+varying vec4 baseColor;
+uniform sampler2D s_texture;
+in vec2 v_texture;
+void main() {
+    vec3 ct,cf;
+    vec4 texel;
+    float at,af;
+    cf = baseColor;
+    af = gl_FrontMaterial.diffuse.a;;
+    texel = texture2D(s_texture, v_texture);
+    ct = texel.rgb;
+    at = texel.a;
+    gl_FragColor = vec4(ct *cf,  at * af);
+}
+'''
 
 
 # glfw callback functions
@@ -151,13 +243,15 @@ pulpit_indices, pulpit_buffer = ObjLoader.load_model("meshes/pulpit.obj")
 window_indices, window_buffer = ObjLoader.load_model("meshes/window.obj")
 cross_indices, cross_buffer = ObjLoader.load_model("meshes/cross.obj")
 floor_indices, floor_buffer = ObjLoader.load_model("meshes/floor.obj")
+vent_indices, vent_buffer = ObjLoader.load_model("meshes/ventilador.obj")
 
-shader = compileProgram(compileShader(
-    vertex_src, GL_VERTEX_SHADER), compileShader(fragment_src, GL_FRAGMENT_SHADER))
+shader = compileProgram(
+    compileShader(vertex_src, GL_VERTEX_SHADER),
+    compileShader(FRAGMENT_SHADER, GL_FRAGMENT_SHADER))
 
 # VAO and VBO
-VAO = glGenVertexArrays(7)
-VBO = glGenBuffers(7)
+VAO = glGenVertexArrays(8)
+VBO = glGenBuffers(8)
 
 # church VAO
 glBindVertexArray(VAO[0])
@@ -295,14 +389,35 @@ glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
                       floor_buffer.itemsize * 8, ctypes.c_void_p(20))
 glEnableVertexAttribArray(2)
 
-textures = glGenTextures(7)
+# vent VAO
+glBindVertexArray(VAO[7])
+# vent Vertex Buffer Object
+glBindBuffer(GL_ARRAY_BUFFER, VBO[7])
+glBufferData(GL_ARRAY_BUFFER, vent_buffer.nbytes,
+             vent_buffer, GL_STATIC_DRAW)
+# vent vertices
+glEnableVertexAttribArray(0)
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+                      vent_buffer.itemsize * 8, ctypes.c_void_p(0))
+# vent textures
+glEnableVertexAttribArray(1)
+glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+                      vent_buffer.itemsize * 8, ctypes.c_void_p(12))
+# vent normals
+glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+                      vent_buffer.itemsize * 8, ctypes.c_void_p(20))
+glEnableVertexAttribArray(2)
+
+textures = glGenTextures(8)
 load_texture("meshes/white-wall.jpg", textures[0])
-load_texture("meshes/door.jpg", textures[1])
+load_texture("meshes/door3.jpg", textures[1])
 load_texture("meshes/door.jpg", textures[2])
-load_texture("meshes/door.jpg", textures[3])
+load_texture("meshes/door3.jpg", textures[3])
 load_texture("meshes/vitrage.jpg", textures[4])
 load_texture("meshes/wood3.jpg", textures[5])
-load_texture("meshes/floor.jpg", textures[6])
+load_texture("meshes/floor4.jpg", textures[6])
+load_texture("meshes/metal.jpg", textures[7])
+
 
 glUseProgram(shader)
 glClearColor(0, 0.1, 0.1, 1)
@@ -313,34 +428,47 @@ glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 projection = pyrr.matrix44.create_perspective_projection_matrix(
     60, 1280 / 720, 0.1, 1000)
 church_pos = pyrr.matrix44.create_from_translation(pyrr.Vector3([0, 0, 0]))
+scale_obj = pyrr.matrix44.create_from_scale(pyrr.Vector3([2, 2, 2]))
+church_pos = pyrr.matrix44.multiply(scale_obj, church_pos)
 
 doors_pos = pyrr.matrix44.create_from_translation(
-    pyrr.Vector3([50, 3.4, -24]))
+    pyrr.Vector3([50 * 2, 3.4 * 2, -24 * 2]))
 rot_y = pyrr.Matrix44.from_z_rotation((PI/180) * 180)
 doors_pos = pyrr.matrix44.multiply(rot_y, doors_pos)
+scale_obj = pyrr.matrix44.create_from_scale(pyrr.Vector3([2, 2, 2]))
+doors_pos = pyrr.matrix44.multiply(scale_obj, doors_pos)
 
 bench_pos = pyrr.matrix44.create_from_translation(
-    pyrr.Vector3([35, -2, -24]))
+    pyrr.Vector3([35, -7, -24]))
 rot_y = pyrr.Matrix44.from_y_rotation((PI/180) * 90)
 bench_pos = pyrr.matrix44.multiply(rot_y, bench_pos)
 scale_obj = pyrr.matrix44.create_from_scale(pyrr.Vector3([2, 2, 2]))
 bench_pos = pyrr.matrix44.multiply(scale_obj, bench_pos)
 
 pulpit_pos = pyrr.matrix44.create_from_translation(
-    pyrr.Vector3([-10, -32, 14]))
+    pyrr.Vector3([-10, -38, 14]))
 scale_obj = pyrr.matrix44.create_from_scale(pyrr.Vector3([3, 3, 3]))
 pulpit_pos = pyrr.matrix44.multiply(scale_obj, pulpit_pos)
 
 window_pos = pyrr.matrix44.create_from_translation(
-    pyrr.Vector3([0, 9, 18]))
+    pyrr.Vector3([0, 9 * 2, 18 * 2]))
+scale_obj = pyrr.matrix44.create_from_scale(pyrr.Vector3([2, 2, 2]))
+window_pos = pyrr.matrix44.multiply(scale_obj, window_pos)
 
 cross_pos = pyrr.matrix44.create_from_translation(pyrr.Vector3([12, -3, 0]))
 scale_obj = pyrr.matrix44.create_from_scale(pyrr.Vector3([2, 2, 2]))
 cross_pos = pyrr.matrix44.multiply(scale_obj, cross_pos)
 
 floor_pos = pyrr.matrix44.create_from_translation(pyrr.Vector3([0, 0, 0]))
-scale_obj = pyrr.matrix44.create_from_scale(pyrr.Vector3([0.1, 0.1, 0.1]))
+scale_obj = pyrr.matrix44.create_from_scale(
+    pyrr.Vector3([0.1 * 2, 0.1 * 2, 0.1 * 2]))
 floor_pos = pyrr.matrix44.multiply(scale_obj, floor_pos)
+
+vent_pos = pyrr.matrix44.create_from_translation(
+    pyrr.Vector3([30 * 2, 12 * 2, 0]))
+scale_obj = pyrr.matrix44.create_from_scale(
+    pyrr.Vector3([10 * 2, 10 * 2, 10 * 2]))
+vent_pos = pyrr.matrix44.multiply(scale_obj, vent_pos)
 
 # eye, target, up
 view = pyrr.matrix44.create_look_at(pyrr.Vector3(
@@ -349,11 +477,29 @@ view = pyrr.matrix44.create_look_at(pyrr.Vector3(
 model_loc = glGetUniformLocation(shader, "model")
 proj_loc = glGetUniformLocation(shader, "projection")
 view_loc = glGetUniformLocation(shader, "view")
+amb_loc = glGetUniformLocation(shader, "Global_ambient")
+Light_ambient_loc = glGetUniformLocation(shader, "Light_ambient")
+Light_diffuse_loc = glGetUniformLocation(shader, "Light_diffuse")
+Light_location_loc = glGetUniformLocation(shader, "Light_location")
+Material_ambient_loc = glGetUniformLocation(shader, "Material_ambient")
+Material_diffuse_loc = glGetUniformLocation(shader, "Material_diffuse")
 
 glUniformMatrix4fv(proj_loc, 1, GL_FALSE, projection)
 glUniformMatrix4fv(view_loc, 1, GL_FALSE, view)
+glUniform4f(amb_loc, .9, .1, .1, .1)
+glUniform4f(Light_ambient_loc, .25, .25, .25, 1.0)
+glUniform4f(Light_diffuse_loc, 0.9, 0.9, 0.9, 0.9)
+glUniform3f(Light_location_loc, 0, 10, 10)
+glUniform4f(Material_ambient_loc, .25, .25, .25, 1.0)
+glUniform4f(Material_diffuse_loc, 1, 1, 1, 1)
+#glUniform4f(Light_ambient_loc, 1, GL_FALSE, .2, .2, .2, 1.0)
+#glUniform4f(Light_diffuse_loc, 1, GL_FALSE, 1, 1, 1, 1)
+#glUniform3f(Light_location_loc, 1, GL_FALSE, 2, 2, 10)
+#glUniform4f(Material_ambient_loc, 1, GL_FALSE, .2, .2, .2, 1.0)
+#glUniform4f(Material_diffuse_loc, 1, GL_FALSE, 1, 1, 1, 1)
 
 step = 1 * (PI/180)
+stepVent = 0.1 * (PI/180)
 
 # the main application loop
 while not glfw.window_should_close(window):
@@ -477,6 +623,16 @@ while not glfw.window_should_close(window):
     glBindTexture(GL_TEXTURE_2D, textures[6])
     glUniformMatrix4fv(model_loc, 1, GL_FALSE, model)
     glDrawArrays(GL_TRIANGLES, 0, len(floor_indices))
+
+    # draw the vent
+    model = vent_pos
+    glBindVertexArray(VAO[7])
+    glBindTexture(GL_TEXTURE_2D, textures[7])
+    glUniformMatrix4fv(model_loc, 1, GL_FALSE, model)
+    glDrawArrays(GL_TRIANGLES, 0, len(vent_indices))
+    rot_y_vent = pyrr.Matrix44.from_y_rotation(stepVent)
+    vent_pos = pyrr.matrix44.multiply(rot_y_vent, model)
+    stepVent += 0.00001 * (PI/180)
 
     glfw.swap_buffers(window)
 # terminate glfw, free up allocated resources
